@@ -7,13 +7,13 @@ const EditDeleteWidget = () => {
 
   useEffect(() => {
     async function fetchMenu() {
-      const response = await fetch("http://localhost:8000/menu");
+      const response = await fetch(`${process.env.FIN_API_URL}/menu`);
       const data = await response.json();
       setMenu(data);
     }
 
     async function fetchApps() {
-      const response = await fetch("http://localhost:8000/widgets");
+      const response = await fetch(`${process.env.FIN_API_URL}/widgets`);
       const data = await response.json();
       setWidgets(data);
     }

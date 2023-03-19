@@ -1,6 +1,7 @@
 import { useState } from "react";
 import axios from "axios";
 import styled from "styled-components";
+import React from 'react';
 
 const PageWrapper = styled.div`
   display: flex;

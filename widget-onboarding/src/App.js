@@ -1,5 +1,6 @@
 import './App.css';
 import WidgetOnboarding from './components/WidgetOnboarding';
+import React from 'react';
 
 function App() {
   return (

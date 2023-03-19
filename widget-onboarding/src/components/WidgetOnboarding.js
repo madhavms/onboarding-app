@@ -1,5 +1,4 @@
 import { useState } from "react";
-import axios from "axios";
 import styled from "styled-components";
 import React from 'react';
 
@@ -80,24 +79,36 @@ function WidgetOnboardingPage() {
     event.preventDefault();
     const widgetData = { url: widgetUrl, appId, remoteId };
     const menuData = { appId, label };
-    axios
-      .all([
-        axios.post(`${process.env.FIN_API_URL}/widgets/`, widgetData),
-        axios.post(`${process.env.FIN_API_URL}/menu/`, menuData),
-      ])
-      .then(
-        axios.spread((widgetResponse, menuResponse) => {
-          setSuccessMessage("Widget onboarded successfully!");
-          resetForm();
-          setErrorMessage("");
-        })
-      )
-      .catch((error) => {
-        console.log(error);
-        setErrorMessage("Widget onboarding failed. Please try again.");
-        setSuccessMessage("");
-      });
+  
+    Promise.all([
+      fetch(`${process.env.FIN_API_URL}/widgets/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(widgetData)
+      }),
+      fetch(`${process.env.FIN_API_URL}/menu/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(menuData)
+      })
+    ])
+    .then(responses => Promise.all(responses.map(res => res.json())))
+    .then(([widgetResponse, menuResponse]) => {
+      setSuccessMessage("Widget onboarded successfully!");
+      resetForm();
+      setErrorMessage("");
+    })
+    .catch((error) => {
+      console.log(error);
+      setErrorMessage("Widget onboarding failed. Please try again.");
+      setSuccessMessage("");
+    });
   };
+  
 
   return (
     <PageWrapper>

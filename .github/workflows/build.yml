@@ -1,0 +1,42 @@
+name: Build and Deploy React App
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'widget-onboarding/**'
+      - '.github/workflows/build.yml'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+
+      - name: Install dependencies
+        working-directory: ./widget-onboarding
+        run: npm install
+        
+      - name: Set environment variable
+        env:
+          FIN_API_URL: ${{ secrets.FIN_API_URL }}
+        run: |
+          echo "FIN_API_URL=${FIN_API_URL}" >> ./widget-onboarding/.env
+
+      - name: Build React app
+        working-directory: ./widget-onboarding
+        run: npm run build
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@4.1.3
+        with:
+          branch: gh-pages
+          folder: ./widget-onboarding/build

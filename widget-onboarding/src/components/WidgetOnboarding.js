@@ -113,7 +113,7 @@ function WidgetOnboardingPage() {
   return (
     <PageWrapper>
       <h1>Widget Onboarding Page</h1>
-      <FormWrapper onSubmit={() => console.log('widget onboarded')}>
+      <FormWrapper onSubmit={handleSubmit}>
         <InputWrapper>
           <Label>Widget URL:</Label>
           <Input

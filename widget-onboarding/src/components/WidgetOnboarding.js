@@ -61,24 +61,24 @@ const ErrorMessage = styled.p`
 `;
 
 function WidgetOnboardingPage() {
-  const [widgetUrl, setWidgetUrl] = useState("");
-  const [appId, setAppId] = useState("");
-  const [remoteId, setRemoteId] = useState("");
+  const [remoteEntryUrl, setRemoteEntryUrl] = useState("");
+  const [widget, setWidget] = useState("");
+  const [scope, setScope] = useState("");
   const [label, setLabel] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
 
   const resetForm = () => {
-    setWidgetUrl("");
-    setAppId("");
-    setRemoteId("");
+    setRemoteEntryUrl("");
+    setWidget("");
+    setScope("");
     setLabel("");
   };
 
   const handleSubmit = (event) => {
     event.preventDefault();
-    const widgetData = { url: widgetUrl, appId, remoteId };
-    const menuData = { appId, label };
+    const widgetData = { url: remoteEntryUrl, scope, widget  };
+    const menuData = { widget, label };
   
     Promise.all([
       fetch(`${process.env.FIN_API_URL}/widgets/`, {
@@ -115,27 +115,27 @@ function WidgetOnboardingPage() {
       <h1>Widget Onboarding Page</h1>
       <FormWrapper onSubmit={handleSubmit}>
         <InputWrapper>
-          <Label>Widget URL:</Label>
+          <Label>Remote Entry URL:</Label>
           <Input
             type="text"
-            value={widgetUrl}
-            onChange={(event) => setWidgetUrl(event.target.value)}
+            value={remoteEntryUrl}
+            onChange={(event) => setRemoteEntryUrl(event.target.value)}
           />
         </InputWrapper>
         <InputWrapper>
-          <Label>App ID:</Label>
+          <Label>Scope:</Label>
           <Input
             type="text"
-            value={appId}
-            onChange={(event) => setAppId(event.target.value)}
+            value={scope}
+            onChange={(event) => setScope(event.target.value)}
           />
         </InputWrapper>
         <InputWrapper>
-          <Label>Remote ID:</Label>
+          <Label>Widget:</Label>
           <Input
             type="text"
-            value={remoteId}
-            onChange={(event) => setRemoteId(event.target.value)}
+            value={widget}
+            onChange={(event) => setWidget(event.target.value)}
           />
         </InputWrapper>
         <InputWrapper>

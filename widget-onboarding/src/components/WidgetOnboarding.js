@@ -1,6 +1,7 @@
 import { useState } from "react";
 import styled from "styled-components";
-import React from 'react';
+import React from "react";
+import WidgetDataForm from "./WidgetDataForm";
 
 const PageWrapper = styled.div`
   display: flex;
@@ -66,6 +67,10 @@ function WidgetOnboardingPage() {
   const [label, setLabel] = useState("");
   const [successMessage, setSuccessMessage] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const clearMessage = () => {  
+    setSuccessMessage("");
+    setErrorMessage("");
+  };
 
   const resetForm = () => {
     setRemoteEntryUrl("");
@@ -74,85 +79,43 @@ function WidgetOnboardingPage() {
     setLabel("");
   };
 
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const widgetData = { url: remoteEntryUrl, scope, widget  };
-    const menuData = { widget, label };
-  
+   const handleSubmit = (widgetData, menuData) => {
     Promise.all([
       fetch(`${process.env.FIN_API_URL}/widgets/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(widgetData)
+        body: JSON.stringify(widgetData),
       }),
       fetch(`${process.env.FIN_API_URL}/menu/`, {
-        method: 'POST',
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json'
+          "Content-Type": "application/json",
         },
-        body: JSON.stringify(menuData)
-      })
+        body: JSON.stringify(menuData),
+      }),
     ])
-    .then(responses => Promise.all(responses.map(res => res.json())))
-    .then(([widgetResponse, menuResponse]) => {
-      setSuccessMessage("Widget onboarded successfully!");
-      resetForm();
-      setErrorMessage("");
-    })
-    .catch((error) => {
-      console.log(error);
-      setErrorMessage("Widget onboarding failed. Please try again.");
-      setSuccessMessage("");
-    });
+      .then((responses) => Promise.all(responses.map((res) => res.json())))
+      .then(([widgetResponse, menuResponse]) => {
+        setSuccessMessage("Widget onboarded successfully!");
+        resetForm();
+        setErrorMessage("");
+      })
+      .catch((error) => {
+        console.log(error);
+        setErrorMessage("Widget onboarding failed. Please try again.");
+        setSuccessMessage("");
+      });
+
+      return {successMessage, errorMessage}
   };
-  
 
   return (
-    <PageWrapper>
+    <div>
       <h1>Widget Onboarding Page</h1>
-      <FormWrapper onSubmit={handleSubmit}>
-        <InputWrapper>
-          <Label>Remote Entry URL:</Label>
-          <Input
-            type="text"
-            value={remoteEntryUrl}
-            onChange={(event) => setRemoteEntryUrl(event.target.value)}
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <Label>Scope:</Label>
-          <Input
-            type="text"
-            value={scope}
-            onChange={(event) => setScope(event.target.value)}
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <Label>Widget:</Label>
-          <Input
-            type="text"
-            value={widget}
-            onChange={(event) => setWidget(event.target.value)}
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <Label>Label:</Label>
-          <Input
-            type="text"
-            value={label}
-            onChange={(event) => setLabel(event.target.value)}
-            required
-          />
-        </InputWrapper>
-        <Button type="submit">Onboard Widget</Button>
-        {successMessage && (
-          <SuccessMessage>Widget onboarded successfully!</SuccessMessage>
-        )}
-        {errorMessage && <ErrorMessage>Widget onboarding failed.</ErrorMessage>}
-      </FormWrapper>
-    </PageWrapper>
+      <WidgetDataForm onSubmit={handleSubmit} successMessage={successMessage} errorMessage={errorMessage} clearMessage={clearMessage}/>
+    </div>
   );
 }
 
